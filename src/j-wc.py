@@ -10,14 +10,16 @@ def main():
 
     # Define the arguments for the tool
     parser.add_argument('--ch', action='store_true', help='Special command')
-    parser.add_argument('-c', nargs='?', const=sys.stdin, type=argparse.FileType('r'))
-    parser.add_argument('-l', type=argparse.FileType('r'))
-    parser.add_argument('-w', type=argparse.FileType('r'))
-    parser.add_argument('-m', type=argparse.FileType('r'))
+    parser.add_argument('-c', nargs='?', type=argparse.FileType('r'), const=sys.stdin)
+    parser.add_argument('-l', nargs='?', type=argparse.FileType('r'), const=sys.stdin)
+    parser.add_argument('-w', nargs='?', type=argparse.FileType('r'), const=sys.stdin)
+    parser.add_argument('-m', nargs='?', type=argparse.FileType('r'), const=sys.stdin)
+    parser.add_argument('filename', nargs='?')
 
     args = parser.parse_args()
-
-    if args.c:
+    if args.ch == False and all(arg is None or (arg == sys.stdin and sys.stdin not in sys.argv) for arg in [args.c, args.l, args.w, args.m]):
+        print(f"  {count_file_lines(args.filename)}(lines) {count_file_words(args.filename)}(words) {count_file_bytes(args.filename)}(bytes) {path.basename(args.filename)}")
+    elif args.c:
         if args.c.name != "<stdin>":
             print(f"  {count_file_bytes(args.c.name)} {path.basename(args.c.name)}")
         else:
